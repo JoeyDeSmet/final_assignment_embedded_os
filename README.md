@@ -39,12 +39,14 @@ class Switch {
     }
 
   private:
-    void switch_loop(void) {
+    void switch_loop(void* arg) {
+      auto c_this = (Switch*) arg;
+
       while (true) {
 
-        for (auto& client_mail : m_client) {
-          std::string&  ip_addr = client_mail->first;
-          Mail<Packet>* mail = client_mail->second;
+        for (auto& client_mail : c_this->m_clients) {
+          auto ip_addr = client_mail.first;
+          auto mail = client_mail.second;
           
           // Add code here
 
@@ -74,7 +76,9 @@ class HTTPClient {
     }
 
   private:
-    void client_loop(void) {
+    void client_loop(void* arg) {
+      auto c_this = (HTTPClient*) arg;
+
       while (true) {
         // Send requests here ....
 
