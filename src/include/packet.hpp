@@ -9,5 +9,4 @@ namespace EmbeddedOS {
     std::string dest_ip;
     std::string payload;
   };
-
 }

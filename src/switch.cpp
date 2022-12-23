@@ -23,12 +23,44 @@ namespace EmbeddedOS {
       for (auto& client_mail : c_this->m_clients) {
         auto ip_addr = client_mail.first;
         auto mail = client_mail.second;
+
+        Packet* message = mail->try_get();
+        if(message == nullptr) continue;
+        // check destination ip
+        printf("Got message on switch from client\n");
+
+        if(c_this->m_clients.find(message->dest_ip) == c_this->m_clients.end()){
+          //gaurd -> send error respone and free messages
+        }
+
+        message->src_ip = ip_addr;
+        auto server_mail = c_this->m_clients[message->dest_ip];
+
+        server_mail->try_alloc_for(rtos::Kernel::wait_for_u32_forever);
+        server_mail->put(message);
+        printf("Sended Message to server\n");
+        mail->free(message);
+
+        //wait for response
+        auto response = server_mail->try_get_for(rtos::Kernel::wait_for_u32_forever);
+        auto responseToClient = mail->try_alloc_for(rtos::Kernel::wait_for_u32_forever);
+
+        if(response->payload != ""){
+          
+          responseToClient->src_ip = response->src_ip;
+          responseToClient->dest_ip = response->dest_ip;
+          responseToClient->payload = response->payload;
+          
+        }
+        else{
+          responseToClient->src_ip = ip_addr;
+          responseToClient->dest_ip = message->dest_ip;
+          responseToClient->payload = "Error 404: Not found";
+        }
+
+        mail->put(responseToClient);
+        server_mail->free(response);
         
-        // Add code here
-
-        // Access client mail based on ip_address:
-        // Mail<Packet>* destination_mail = m_clients["10.0.0.1"];
-
       }
 
     }

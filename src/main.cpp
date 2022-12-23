@@ -4,20 +4,27 @@
 
 #include "include/switch.hpp"
 #include "include/http-client.hpp"
+#include "http-server.hpp"
 
 using namespace EmbeddedOS;
 
 int main(void) {
+  printf("Start!\n");
   Switch nswitch;
+
+  HTTPServer server0(nswitch.connect("10.100.0.2"), "server0");
+  HTTPServer server1(nswitch.connect("10.100.0.3"), "server1");
+  HTTPServer server2(nswitch.connect("10.100.0.4"), "server2");
+  HTTPServer server3(nswitch.connect("10.100.0.5"), "server3");
+  HTTPServer server4(nswitch.connect("10.100.0.6"), "server4");
   
   HTTPClient client0(nswitch.connect("10.0.0.2"));
   HTTPClient client1(nswitch.connect("10.0.0.3"));
   HTTPClient client2(nswitch.connect("10.0.0.4"));
   HTTPClient client3(nswitch.connect("10.0.0.5"));
-  
-  // TODO: Add httpServers
 
   nswitch.start();
+
 
   return 0;
 }

@@ -1,5 +1,5 @@
 #pragma once
-
+#define MBED_CONF_RTOS_PRESENT 1
 #include "packet.hpp"
 
 #include <string>

@@ -1,26 +1,28 @@
-#pragma once 
+#pragma once
 #define MBED_CONF_RTOS_PRESENT 1
 
 #include "packet.hpp"
-
-#include "rtos.h"
 #include "rtos/Mail.h"
 #include "rtos/Thread.h"
 
+
 namespace EmbeddedOS {
 
-  class HTTPClient {
+  class HTTPServer{
 
     public:
-      HTTPClient(rtos::Mail<Packet, 1>* connection);
+      HTTPServer(rtos::Mail<Packet, 1>* connection, std::string payload);
 
     private:
-      static void client_loop(void* arg);
+      static void server_loop(void* arg);
 
     private:
+
       rtos::Mail<Packet, 1>* m_mail;
       rtos::Thread m_thread;
+      std::string payload;
+
+
 
   };
-
 }
