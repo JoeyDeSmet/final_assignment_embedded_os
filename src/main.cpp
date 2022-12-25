@@ -25,6 +25,13 @@ int main(void) {
 
   nswitch.start();
 
+  auto mail = client0.getMail();
+
+  Packet* message = mail->try_alloc_for(rtos::Kernel::wait_for_u32_forever);
+  message->dest_ip = "10.100.0.2";
+  message->payload = "Yo";
+  mail->put(message);
+
   while(1){
     ThisThread::sleep_for(1s);
   }

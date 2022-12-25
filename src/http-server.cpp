@@ -13,19 +13,24 @@ namespace EmbeddedOS{
     while (true) {
       // Receive request ....
       auto message = c_this->m_mail->try_get_for(rtos::Kernel::wait_for_u32_forever);
+      printf("Server got message\n");
 
-      printf("Got request from switch on server\n");
-      
-      // Send response here ....
-      auto response = c_this->m_mail->try_alloc_for(rtos::Kernel::wait_for_u32_forever);
-
-      response->dest_ip = message->src_ip;
-      response->src_ip = message->dest_ip;
-      response->payload = c_this->payload;
       c_this->m_mail->free(message);
+
+      // Send response here ....
+      printf("server allocating memory\n");
+      // Stuck here can't allocate memory 
+      Packet* response = c_this->m_mail->try_alloc();
+      while(response == nullptr){
+        response = c_this->m_mail->try_alloc();
+      }
+      printf("server allocated memory\n");
+      response->dest_ip = "10.0.0.2";
+      // response->src_ip = src_ip;
+      response->payload = c_this->payload;
       c_this->m_mail->put(response);
+      printf("sended response\n");
       
-      printf("Sended back response to switch\n");
     }
   }
 

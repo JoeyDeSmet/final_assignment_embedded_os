@@ -27,7 +27,7 @@ namespace EmbeddedOS {
         Packet* message = mail->try_get();
         if(message == nullptr) continue;
         // check destination ip
-        printf("Got message on switch from client\n");
+        printf("Switch got message\n");
 
         if(c_this->m_clients.find(message->dest_ip) == c_this->m_clients.end()){
           //gaurd -> send error respone and free messages
@@ -38,28 +38,28 @@ namespace EmbeddedOS {
 
         server_mail->try_alloc_for(rtos::Kernel::wait_for_u32_forever);
         server_mail->put(message);
-        printf("Sended Message to server\n");
+
         mail->free(message);
 
-        //wait for response
-        auto response = server_mail->try_get_for(rtos::Kernel::wait_for_u32_forever);
-        auto responseToClient = mail->try_alloc_for(rtos::Kernel::wait_for_u32_forever);
+        // //wait for response
+        // auto response = server_mail->try_get_for(rtos::Kernel::wait_for_u32_forever);
+        // auto responseToClient = mail->try_alloc_for(rtos::Kernel::wait_for_u32_forever);
 
-        if(response->payload != ""){
+        // if(response->payload != ""){
           
-          responseToClient->src_ip = response->src_ip;
-          responseToClient->dest_ip = response->dest_ip;
-          responseToClient->payload = response->payload;
+        //   responseToClient->src_ip = response->src_ip;
+        //   responseToClient->dest_ip = response->dest_ip;
+        //   responseToClient->payload = response->payload;
           
-        }
-        else{
-          responseToClient->src_ip = ip_addr;
-          responseToClient->dest_ip = message->dest_ip;
-          responseToClient->payload = "Error 404: Not found";
-        }
+        // }
+        // else{
+        //   responseToClient->src_ip = ip_addr;
+        //   responseToClient->dest_ip = message->dest_ip;
+        //   responseToClient->payload = "Error 404: Not found";
+        // }
 
-        mail->put(responseToClient);
-        server_mail->free(response);
+        // mail->put(responseToClient);
+        // server_mail->free(response);
         
       }
 
