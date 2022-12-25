@@ -22,7 +22,7 @@ namespace EmbeddedOS {
       // Check for message
       auto next_packet = c_this->m_incomming.try_get_for(rtos::Kernel::wait_for_u32_forever);
 
-      auto itr = c_this->m_clients.find(next_packet->dest_ip);
+      auto itr = c_this->m_clients.find(std::string{ next_packet->dest_ip });
 
       if (itr == c_this->m_clients.end()) {
         // Destination ip does not exists
@@ -37,7 +37,7 @@ namespace EmbeddedOS {
         memcpy(&error_response_message->payload, error_response, strlen(error_response));
 
         // Send error packet
-        c_this->m_clients[next_packet->src_ip]->put(error_response_message);
+        c_this->m_clients[std::string{ next_packet->src_ip }]->put(error_response_message);
 
         // Free packet and continue
         c_this->m_incomming.free(next_packet);
