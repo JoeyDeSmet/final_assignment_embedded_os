@@ -26,7 +26,7 @@ namespace EmbeddedOS {
 
       if (itr == c_this->m_clients.end()) {
         // Destination ip does not exists
-        Packet* error_response = c_this->m_clients[next_packet->src_ip]->try_alloc_for(rtos::Kernel::wait_for_u32_forever);
+        Packet* error_response = c_this->m_clients[next_packet->src_ip]->try_calloc_for(rtos::Kernel::wait_for_u32_forever);
 
         // Create error packet
         error_response->dest_ip = next_packet->src_ip;
@@ -42,7 +42,7 @@ namespace EmbeddedOS {
       } 
 
       // Destination exists
-      Packet* new_packet = itr->second->try_alloc_for(rtos::Kernel::wait_for_u32_forever);
+      Packet* new_packet = itr->second->try_calloc_for(rtos::Kernel::wait_for_u32_forever);
 
       new_packet->src_ip = next_packet->src_ip;
       new_packet->dest_ip = next_packet->dest_ip;

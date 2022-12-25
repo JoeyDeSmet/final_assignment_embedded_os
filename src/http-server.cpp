@@ -18,7 +18,7 @@ namespace EmbeddedOS{
       
 
       // Create a response message
-      Packet* response = c_this->m_switch_mail->try_alloc_for(rtos::Kernel::wait_for_u32_forever);      
+      Packet* response = c_this->m_switch_mail->try_calloc_for(rtos::Kernel::wait_for_u32_forever);      
 
       response->src_ip = c_this->m_ip;
       response->dest_ip = message->src_ip;

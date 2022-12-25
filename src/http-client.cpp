@@ -13,7 +13,7 @@ namespace EmbeddedOS {
 
     while (true) {
       // Send requests here ....
-      Packet* message = c_this->m_switch_mail->try_alloc_for(rtos::Kernel::wait_for_u32_forever);
+      Packet* message = c_this->m_switch_mail->try_calloc_for(rtos::Kernel::wait_for_u32_forever);
       
       message->src_ip = c_this->m_ip;
       message->dest_ip = "10.100.0.2";
