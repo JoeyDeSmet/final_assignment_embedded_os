@@ -11,14 +11,14 @@ namespace EmbeddedOS {
   class HTTPServer{
 
     public:
-      HTTPServer(rtos::Mail<Packet, 1>* connection, rtos::Mail<Packet, 10>* switch_mail, const std::string& payload, const std::string& ip);
+      HTTPServer(rtos::Mail<Packet, 1>* connection, rtos::Mail<Packet, 10>* switch_mail, const char* payload, const char* ip);
 
     private:
       static void server_loop(void* arg);
 
     private:
-      std::string m_ip;
-      std::string m_payload;
+      const char* m_ip;
+      const char* m_payload;
 
     private:
       rtos::Thread m_thread;

@@ -19,7 +19,7 @@ namespace EmbeddedOS {
       void start(void);
 
     public:
-      rtos::Mail<Packet, 1>* connect(const std::string& client_ip);
+      rtos::Mail<Packet, 1>* connect(const char* client_ip);
       rtos::Mail<Packet, 10>* get_switch_mail(void) { return &m_incomming; }
 
     private:
@@ -28,7 +28,7 @@ namespace EmbeddedOS {
     private:
       rtos::Thread m_thread;
       rtos::Mail<Packet, 10> m_incomming;
-      std::unordered_map<std::string, rtos::Mail<Packet, 1>* > m_clients;
+      std::unordered_map<const char*, rtos::Mail<Packet, 1>* > m_clients;
 
   };
 

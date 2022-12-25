@@ -8,19 +8,22 @@
 #include "rtos/Mail.h"
 #include "rtos/Thread.h"
 
+#include <string.h>
+
 namespace EmbeddedOS {
 
   class HTTPClient {
 
     public:
-      HTTPClient(rtos::Mail<Packet, 1>* connection, rtos::Mail<Packet, 10>* switch_mail, const std::string& ip);
+      HTTPClient(rtos::Mail<Packet, 1>* connection, rtos::Mail<Packet, 10>* switch_mail, const char* ip);
 
       rtos::Mail<Packet, 1> * getMail(void);
     private:
       static void client_loop(void* arg);
 
     private:
-      std::string m_ip;
+      const char* m_ip;
+      
       rtos::Thread m_thread;
       rtos::Mail<Packet, 1>* m_mail;
       rtos::Mail<Packet, 10>* m_switch_mail;
