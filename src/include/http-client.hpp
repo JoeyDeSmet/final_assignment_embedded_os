@@ -18,7 +18,6 @@ namespace EmbeddedOS {
     public:
       HTTPClient(rtos::Mail<Packet, 1>* connection, rtos::Mail<Packet, 10>* switch_mail, const char* ip);
 
-      rtos::Mail<Packet, 1> * getMail(void);
     private:
       static void client_loop(void* arg);
 

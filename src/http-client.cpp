@@ -9,10 +9,6 @@ namespace EmbeddedOS {
   { 
     m_thread.start(mbed::callback(HTTPClient::client_loop, this));
   }
-  
-  rtos::Mail<Packet, 1>* HTTPClient::getMail(void){
-    return &m_main_mail;
-  }
 
   void HTTPClient::client_loop(void* arg) {
     auto c_this = (HTTPClient *) arg;

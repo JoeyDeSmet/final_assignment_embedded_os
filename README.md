@@ -16,6 +16,8 @@ The switch should be able to route packets between the clients and servers.
 
 <hr/>
 
+**Note**: You may have to change a but of the classes when you encounter memory issues, use char* instead of std::string, ... etc
+
 1. Write a struct representing a IP packet. The struct sould contain the source and destination ip address and a payload.
 
 2. Complete the folling Switch class so that it check if a message is on a client mail, and than forward the packet to the right client or server.
