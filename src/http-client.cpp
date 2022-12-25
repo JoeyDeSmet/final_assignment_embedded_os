@@ -17,7 +17,7 @@ namespace EmbeddedOS {
 
     while (true) {
       // Get info from main
-      Packet * mainMessage = c_this->m_main_mail.try_get_for(rtos::Kernel::wait_for_u32_forever);
+      // Packet * mainMessage = c_this->m_main_mail.try_get_for(rtos::Kernel::wait_for_u32_forever);
       // Send requests here ....
       Packet* message = c_this->m_switch_mail->try_calloc_for(rtos::Kernel::wait_for_u32_forever);
       
@@ -29,7 +29,7 @@ namespace EmbeddedOS {
       memcpy(message->payload, &payload, strlen(payload));
       
       c_this->m_switch_mail->put(message);
-      c_this->m_main_mail.free(mainMessage);
+      // c_this->m_main_mail.free(mainMessage);
 
       Packet* response = c_this->m_mail->try_get_for(rtos::Kernel::wait_for_u32_forever);
       printf("[Client:%s] response form %s : %s\n", c_this->m_ip, response->src_ip, response->payload);
