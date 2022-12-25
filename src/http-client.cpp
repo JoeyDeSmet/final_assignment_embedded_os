@@ -21,12 +21,12 @@ namespace EmbeddedOS {
       // Send requests here ....
       Packet* message = c_this->m_switch_mail->try_calloc_for(rtos::Kernel::wait_for_u32_forever);
       
-      const char payload[] = "GET";
-      const char temporary[] = "10.100.0.2";
+      const char* payload = "GET";
+      const char* temporary = "10.100.0.2";
 
       memcpy(message->src_ip, c_this->m_ip, strlen(c_this->m_ip));
-      memcpy(message->dest_ip, &temporary, strlen(temporary));
-      memcpy(message->payload, &payload, strlen(payload));
+      memcpy(message->dest_ip, temporary, strlen(temporary));
+      memcpy(message->payload, payload, strlen(payload));
       
       c_this->m_switch_mail->put(message);
       // c_this->m_main_mail.free(mainMessage);

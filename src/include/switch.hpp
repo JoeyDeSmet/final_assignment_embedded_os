@@ -28,7 +28,7 @@ namespace EmbeddedOS {
     private:
       rtos::Thread m_thread;
       rtos::Mail<Packet, 10> m_incomming;
-      std::unordered_map<const char*, rtos::Mail<Packet, 1>* > m_clients;
+      std::unordered_map<std::string, rtos::Mail<Packet, 1>* > m_clients;
 
   };
 
