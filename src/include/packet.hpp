@@ -5,8 +5,8 @@
 namespace EmbeddedOS {
 
   struct Packet {
-    char src_ip[15] = { 0 };
-    char dest_ip[15] = { 0 };
-    char payload[50] = { 0 };
+    char src_ip[15];
+    char dest_ip[15];
+    char payload[50];
   };
 }
