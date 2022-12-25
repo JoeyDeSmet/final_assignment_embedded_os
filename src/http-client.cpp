@@ -23,7 +23,7 @@ namespace EmbeddedOS {
       const char* payload = "GET";
       const char* random_server = available_servers[int (rand() % 3)];
       
-      printf("[Client:%s] sending request to %s\n", c_this->m_ip, random_server);
+      print("[Client:%s] sending request to %s\n", c_this->m_ip, random_server);
 
       memcpy(message->src_ip, c_this->m_ip, strlen(c_this->m_ip));
       memcpy(message->dest_ip, random_server, strlen(random_server));
@@ -33,7 +33,7 @@ namespace EmbeddedOS {
 
       Packet* response = c_this->m_mail->try_get_for(rtos::Kernel::wait_for_u32_forever);
       
-      printf("[Client:%s] response form %s:\n %s\n", c_this->m_ip, response->src_ip, response->payload);
+      print("[Client:%s] response form %s:\n %s\n", c_this->m_ip, response->src_ip, response->payload);
       
       c_this->m_mail->free(response);
 

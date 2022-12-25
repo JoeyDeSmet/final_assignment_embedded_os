@@ -3,11 +3,14 @@
 #include "mbed.h"
 #include "rtos/Thread.h"
 
+#include "include/logging.hpp"
 #include "include/switch.hpp"
 #include "include/http-server.hpp"
 #include "include/http-client.hpp"
 
 using namespace EmbeddedOS;
+
+rtos::Mutex print_mtx;
 
 const char* server0_ip = "10.100.0.2";
 const char* server1_ip = "10.100.0.3";
@@ -21,7 +24,7 @@ const char* client3_ip = "10.0.0.5";
 const char* available_servers[] = { server0_ip, server1_ip, server2_ip };
 
 int main(void) {
-  printf("Start!\n");
+  print("Start!\n");
   Switch nswitch;
 
   HTTPServer server0(nswitch.connect(server0_ip), nswitch.get_switch_mail(), "<html>Hello, from server0</html>", server0_ip);

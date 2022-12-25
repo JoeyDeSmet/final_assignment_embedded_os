@@ -22,12 +22,12 @@ namespace EmbeddedOS {
       // Check for message
       auto next_packet = c_this->m_incomming.try_get_for(rtos::Kernel::wait_for_u32_forever);
 
-      printf("destination ip: %s\n", &next_packet->dest_ip[0]);
+      print("destination ip: %s\n", &next_packet->dest_ip[0]);
 
       auto itr = c_this->m_clients.find(std::string{ &next_packet->dest_ip[0] });
 
       if (itr == c_this->m_clients.end()) {
-        printf("[Switch] error no ip address not know: %s\n", next_packet->dest_ip);
+        print("[Switch] error no ip address not know: %s\n", next_packet->dest_ip);
         // Destination ip does not exists
         auto error_response_message = c_this->m_clients[std::string{next_packet->src_ip}]->try_calloc_for(rtos::Kernel::wait_for_u32_forever);
 
