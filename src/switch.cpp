@@ -19,50 +19,38 @@ namespace EmbeddedOS {
     auto c_this = (Switch*) arg;
 
     while (true) {
+      // Check for message
+      Packet* next_packet = c_this->m_incomming.try_get_for(rtos::Kernel::wait_for_u32_forever);
 
-      for (auto& client_mail : c_this->m_clients) {
-        auto ip_addr = client_mail.first;
-        auto mail = client_mail.second;
+      auto itr = c_this->m_clients.find(next_packet->dest_ip);
 
-        Packet* message = mail->try_get();
-        if(message == nullptr) continue;
-        // check destination ip
-        printf("Switch got message\n");
+      if (itr == c_this->m_clients.end()) {
+        // Destination ip does not exists
+        Packet* error_response = c_this->m_clients[next_packet->src_ip]->try_alloc_for(rtos::Kernel::wait_for_u32_forever);
 
-        if(c_this->m_clients.find(message->dest_ip) == c_this->m_clients.end()){
-          //gaurd -> send error respone and free messages
-        }
+        // Create error packet
+        error_response->dest_ip = next_packet->src_ip;
+        error_response->src_ip = "0.0.0.0";
+        error_response->payload = "Destination Host unreachable";
 
-        message->src_ip = ip_addr;
-        auto server_mail = c_this->m_clients[message->dest_ip];
+        // Send error packet
+        c_this->m_clients[next_packet->src_ip]->put(error_response);
 
-        server_mail->try_alloc_for(rtos::Kernel::wait_for_u32_forever);
-        server_mail->put(message);
+        // Free packet and continue
+        c_this->m_incomming.free(next_packet);
+        continue;
+      } 
 
-        mail->free(message);
+      // Destination exists
+      Packet* new_packet = itr->second->try_alloc_for(rtos::Kernel::wait_for_u32_forever);
 
-        // //wait for response
-        // auto response = server_mail->try_get_for(rtos::Kernel::wait_for_u32_forever);
-        // auto responseToClient = mail->try_alloc_for(rtos::Kernel::wait_for_u32_forever);
+      new_packet->src_ip = next_packet->src_ip;
+      new_packet->dest_ip = next_packet->dest_ip;
+      new_packet->payload = next_packet->payload;
 
-        // if(response->payload != ""){
-          
-        //   responseToClient->src_ip = response->src_ip;
-        //   responseToClient->dest_ip = response->dest_ip;
-        //   responseToClient->payload = response->payload;
-          
-        // }
-        // else{
-        //   responseToClient->src_ip = ip_addr;
-        //   responseToClient->dest_ip = message->dest_ip;
-        //   responseToClient->payload = "Error 404: Not found";
-        // }
+      itr->second->put(new_packet);
 
-        // mail->put(responseToClient);
-        // server_mail->free(response);
-        
-      }
-
+      c_this->m_incomming.free(next_packet);
     }
   }
 

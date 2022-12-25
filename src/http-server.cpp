@@ -3,7 +3,9 @@
 
 namespace EmbeddedOS{
 
-  HTTPServer::HTTPServer(rtos::Mail<Packet, 1>* connection, std::string payload): m_mail(connection), payload(payload){
+  HTTPServer::HTTPServer(rtos::Mail<Packet, 1>* connection, rtos::Mail<Packet, 10>* switch_mail, const std::string& payload, const std::string& ip)
+    : m_mail(connection), m_switch_mail(switch_mail), m_payload(payload), m_ip(ip)
+  {
     m_thread.start(mbed::callback(HTTPServer::server_loop, this));
   }
 
@@ -11,26 +13,23 @@ namespace EmbeddedOS{
     auto c_this = (HTTPServer *) arg;
 
     while (true) {
-      // Receive request ....
+      // Get message from my own mail
       auto message = c_this->m_mail->try_get_for(rtos::Kernel::wait_for_u32_forever);
-      printf("Server got message\n");
-
-      c_this->m_mail->free(message);
-
-      // Send response here ....
-      printf("server allocating memory\n");
-      // Stuck here can't allocate memory 
-      Packet* response = c_this->m_mail->try_alloc();
-      while(response == nullptr){
-        response = c_this->m_mail->try_alloc();
-      }
-      printf("server allocated memory\n");
-      response->dest_ip = "10.0.0.2";
-      // response->src_ip = src_ip;
-      response->payload = c_this->payload;
-      c_this->m_mail->put(response);
-      printf("sended response\n");
       
+
+      // Create a response message
+      Packet* response = c_this->m_switch_mail->try_alloc_for(rtos::Kernel::wait_for_u32_forever);      
+
+      response->src_ip = c_this->m_ip;
+      response->dest_ip = message->src_ip;
+      response->payload = c_this->m_payload;
+
+      // Send message to switch
+      c_this->m_switch_mail->put(response);
+      
+
+      // Free received message
+      c_this->m_mail->free(message);
     }
   }
 
