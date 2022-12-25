@@ -25,6 +25,7 @@ namespace EmbeddedOS {
       auto itr = c_this->m_clients.find(std::string{ next_packet->dest_ip });
 
       if (itr == c_this->m_clients.end()) {
+        printf("Didn't found dest ip\n");
         // Destination ip does not exists
         auto error_response_message = c_this->m_clients[std::string{next_packet->src_ip}]->try_calloc_for(rtos::Kernel::wait_for_u32_forever);
 
@@ -44,6 +45,7 @@ namespace EmbeddedOS {
         continue;
       } 
 
+      printf("Found dest ip\n");
       // Destination exists
       Packet* new_packet = itr->second->try_calloc_for(rtos::Kernel::wait_for_u32_forever);
 

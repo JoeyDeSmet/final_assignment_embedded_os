@@ -19,22 +19,27 @@ namespace EmbeddedOS {
       // Get info from main
       // Packet * mainMessage = c_this->m_main_mail.try_get_for(rtos::Kernel::wait_for_u32_forever);
       // Send requests here ....
+      printf("Client creating message\n");
       Packet* message = c_this->m_switch_mail->try_calloc_for(rtos::Kernel::wait_for_u32_forever);
       
       const char* payload = "GET";
       const char* temporary = "10.100.0.2";
 
+      printf("Copy message\n");
       memcpy(message->src_ip, c_this->m_ip, strlen(c_this->m_ip));
       memcpy(message->dest_ip, temporary, strlen(temporary));
       memcpy(message->payload, payload, strlen(payload));
       
+      printf("Put\n");
       c_this->m_switch_mail->put(message);
       // c_this->m_main_mail.free(mainMessage);
 
+      printf("Waiting response\n");
       Packet* response = c_this->m_mail->try_get_for(rtos::Kernel::wait_for_u32_forever);
       printf("[Client:%s] response form %s : %s\n", c_this->m_ip, response->src_ip, response->payload);
       c_this->m_mail->free(response);
 
+      printf("Sleep\n");
       ThisThread::sleep_for(1s);
     }
   }
