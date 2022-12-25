@@ -20,24 +20,24 @@ namespace EmbeddedOS {
 
     while (true) {
       // Check for message
-      Packet* next_packet = c_this->m_incomming.try_get_for(rtos::Kernel::wait_for_u32_forever);
+      auto next_packet = c_this->m_incomming.try_get_for(rtos::Kernel::wait_for_u32_forever);
 
       auto itr = c_this->m_clients.find(next_packet->dest_ip);
 
       if (itr == c_this->m_clients.end()) {
         // Destination ip does not exists
-        Packet* error_response = c_this->m_clients[next_packet->src_ip]->try_calloc_for(rtos::Kernel::wait_for_u32_forever);
+        auto error_response_message = c_this->m_clients[next_packet->src_ip]->try_calloc_for(rtos::Kernel::wait_for_u32_forever);
 
         const char error_ip[] = "0.0.0.0";
         const char error_response[] = "Destination Host unreachable";
 
         // Create error packet
-        memcpy(&error_response->dest_ip, &next_packet->src_ip, strlen(&next_packet->src_ip));
-        memcpy(&error_response->src_ip, &error_ip, strlen(&error_ip));
-        memcpy(&error_response->payload, &error_response, strlen(&error_response));
+        memcpy(&error_response_message->dest_ip, &next_packet->src_ip, (sizeof(next_packet->src_ip) / (sizeof(next_packet->src_ip[0]))));
+        memcpy(&error_response_message->src_ip, &error_ip, (sizeof(error_ip) / (sizeof(error_ip[0]))));
+        memcpy(&error_response_message->payload, &error_response, (sizeof(error_response) / (sizeof(error_response[0]))));
 
         // Send error packet
-        c_this->m_clients[next_packet->src_ip]->put(error_response);
+        c_this->m_clients[next_packet->src_ip]->put(error_response_message);
 
         // Free packet and continue
         c_this->m_incomming.free(next_packet);
