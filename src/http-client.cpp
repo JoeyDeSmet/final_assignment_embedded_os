@@ -29,7 +29,7 @@ namespace EmbeddedOS {
 
       Packet* response = c_this->m_mail->try_get_for(rtos::Kernel::wait_for_u32_forever);
       
-      print("[Client:%s] response form %s:\n %s\n", c_this->m_ip, response->src_ip, response->payload);
+      print("[Client:%s] response from %s:\n %s\n", c_this->m_ip, response->src_ip, response->payload);
       
       c_this->m_mail->free(response);
 
