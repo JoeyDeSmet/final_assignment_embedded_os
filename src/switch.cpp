@@ -8,9 +8,9 @@ namespace EmbeddedOS {
     m_thread.start(mbed::callback(Switch::switch_loop, this));
   }
 
-  rtos::Mail<Packet, 1>* Switch::connect(const char* client_ip) {
+  rtos::Mail<Packet, 1>* Switch::connect(const std::string& client_ip) {
     auto created_connection = new Mail<Packet, 1>;
-    m_clients[std::string{ client_ip }] = created_connection;
+    m_clients[client_ip] = created_connection;
 
     return created_connection;
   }
@@ -22,7 +22,9 @@ namespace EmbeddedOS {
       // Check for message
       auto next_packet = c_this->m_incomming.try_get_for(rtos::Kernel::wait_for_u32_forever);
 
-      auto itr = c_this->m_clients.find(std::string{ next_packet->dest_ip });
+      printf("destination ip: %s\n", &next_packet->dest_ip[0]);
+
+      auto itr = c_this->m_clients.find(std::string{ &next_packet->dest_ip[0] });
 
       if (itr == c_this->m_clients.end()) {
         printf("Didn't found dest ip\n");
@@ -32,6 +34,7 @@ namespace EmbeddedOS {
         const char* error_ip = "0.0.0.0";
         const char* error_response = "Destination Host unreachable";
 
+        printf("Creating error resp\n");
         // Create error packet
         memcpy(&error_response_message->dest_ip, &next_packet->src_ip, (sizeof(next_packet->src_ip) / (sizeof(next_packet->src_ip[0]))));
         memcpy(&error_response_message->src_ip, error_ip, strlen(error_ip));
