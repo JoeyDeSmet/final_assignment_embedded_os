@@ -27,14 +27,13 @@ namespace EmbeddedOS {
       auto itr = c_this->m_clients.find(std::string{ &next_packet->dest_ip[0] });
 
       if (itr == c_this->m_clients.end()) {
-        printf("Didn't found dest ip\n");
+        printf("[Switch] error no ip address not know: %s\n", next_packet->dest_ip);
         // Destination ip does not exists
         auto error_response_message = c_this->m_clients[std::string{next_packet->src_ip}]->try_calloc_for(rtos::Kernel::wait_for_u32_forever);
 
         const char* error_ip = "0.0.0.0";
         const char* error_response = "Destination Host unreachable";
 
-        printf("Creating error resp\n");
         // Create error packet
         memcpy(&error_response_message->dest_ip, &next_packet->src_ip, strlen(next_packet->dest_ip));
         memcpy(&error_response_message->src_ip, error_ip, strlen(error_ip));
@@ -48,7 +47,6 @@ namespace EmbeddedOS {
         continue;
       } 
 
-      printf("Found dest ip\n");
       // Destination exists
       Packet* new_packet = itr->second->try_calloc_for(rtos::Kernel::wait_for_u32_forever);
 

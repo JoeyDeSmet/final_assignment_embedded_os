@@ -21,11 +21,10 @@ namespace EmbeddedOS{
 
       memcpy(&response->src_ip, c_this->m_ip, strlen(c_this->m_ip));
       memcpy(&response->dest_ip, message->src_ip, strlen(message->src_ip));
-      memcpy(&response->payload, c_this->m_payload, strlen(c_this->m_ip));
+      memcpy(&response->payload, c_this->m_payload, strlen(c_this->m_payload));
 
       // Send message to switch
       c_this->m_switch_mail->put(response);
-      
 
       // Free received message
       c_this->m_mail->free(message);

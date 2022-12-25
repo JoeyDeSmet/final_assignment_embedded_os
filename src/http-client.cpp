@@ -1,5 +1,7 @@
 #include "./include/http-client.hpp"
 
+extern const char* available_servers[3];
+
 namespace EmbeddedOS {
 
   HTTPClient::HTTPClient(rtos::Mail<Packet, 1>* connection, rtos::Mail<Packet, 10>* switch_mail, const char* ip) 
@@ -16,30 +18,25 @@ namespace EmbeddedOS {
     auto c_this = (HTTPClient *) arg;
 
     while (true) {
-      // Get info from main
-      // Packet * mainMessage = c_this->m_main_mail.try_get_for(rtos::Kernel::wait_for_u32_forever);
-      // Send requests here ....
-      printf("Client creating message\n");
       Packet* message = c_this->m_switch_mail->try_calloc_for(rtos::Kernel::wait_for_u32_forever);
       
       const char* payload = "GET";
-      const char* temporary = "10.100.0.2";
+      const char* random_server = available_servers[int (rand() % 3)];
+      
+      printf("[Client:%s] sending request to %s\n", c_this->m_ip, random_server);
 
-      printf("Copy message\n");
       memcpy(message->src_ip, c_this->m_ip, strlen(c_this->m_ip));
-      memcpy(message->dest_ip, temporary, strlen(temporary));
+      memcpy(message->dest_ip, random_server, strlen(random_server));
       memcpy(message->payload, payload, strlen(payload));
       
-      printf("Put\n");
       c_this->m_switch_mail->put(message);
-      // c_this->m_main_mail.free(mainMessage);
 
-      printf("Waiting response\n");
       Packet* response = c_this->m_mail->try_get_for(rtos::Kernel::wait_for_u32_forever);
-      printf("[Client:%s] response form %s : %s\n", c_this->m_ip, response->src_ip, response->payload);
+      
+      printf("[Client:%s] response form %s:\n %s\n", c_this->m_ip, response->src_ip, response->payload);
+      
       c_this->m_mail->free(response);
 
-      printf("Sleep\n");
       ThisThread::sleep_for(1s);
     }
   }
